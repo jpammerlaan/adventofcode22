@@ -68,18 +68,12 @@ def part_two(instructions):
     for direction, n_steps in instructions:
         step = DIRECTION_MAP[direction]
         for i in range(n_steps):
-            new_knots = []
-            head = knots[0]
-            head += step
-            for tail in knots[1:]:
-                tail = get_tail(head, tail)
-                new_knots.append(head)
-                head = tail  # set the current knot to the next head
-            visited.add(tuple(head))
-            new_knots.append(head)
-            knots = new_knots
+            knots[0] += step
+            for k, tail in enumerate(knots[1:]):
+                knots[k + 1] = get_tail(knots[k], knots[k + 1])
+            visited.add(tuple(knots[9]))
     print(len(visited))
 
 
-# part_one(instructions=instruction_list)
+part_one(instructions=instruction_list)
 part_two(instructions=instruction_list)
