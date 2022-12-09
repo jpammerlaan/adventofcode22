@@ -47,41 +47,37 @@ def part_one(instructions):
         step = DIRECTION_MAP[direction]
         for i in range(n_steps):
             head += step
-            if np.linalg.norm(head - tail) > np.sqrt(2):
-                dx, dy = head - tail
-                if abs(dx) > 1 or (abs(dx) == 1 and abs(dy) > 1):
-                    tail[0] += np.sign(dx)
-                if abs(dy) or (abs(dy) == 1 and abs(dx) > 1):
-                    tail[1] += np.sign(dy)
-            print_knots([head, tail])
+            tail = get_tail(head, tail)
             visited.add(tuple(tail))
-    # print_visited(visited)
     print(len(visited))
+
+
+def get_tail(head, tail):
+    if np.linalg.norm(head - tail) > np.sqrt(2):
+        dx, dy = head - tail
+        if abs(dx) > 1 or (abs(dx) == 1 and abs(dy) > 1):
+            tail[0] += np.sign(dx)
+        if abs(dy) or (abs(dy) == 1 and abs(dx) > 1):
+            tail[1] += np.sign(dy)
+    return tail
 
 
 def part_two(instructions):
     knots = [np.array((0., 0.)) for _ in range(10)]  # init 9 knots on 0,0
-    updated_knots = []
     visited = set()
     for direction, n_steps in instructions:
-        print(f'{direction}' f'{n_steps}')
         step = DIRECTION_MAP[direction]
         for i in range(n_steps):
+            new_knots = []
             head = knots[0]
             head += step
             for tail in knots[1:]:
-                if np.linalg.norm(head - tail) > np.sqrt(2):
-                    dx, dy = head - tail
-                    if abs(dx) > 1 or (abs(dx) == 1 and abs(dy) > 1):
-                        tail[0] += np.sign(dx)
-                    if abs(dy) or (abs(dy) == 1 and abs(dx) > 1):
-                        tail[1] += np.sign(dy)
-                updated_knots.append(head)
+                tail = get_tail(head, tail)
+                new_knots.append(head)
                 head = tail  # set the current knot to the next head
             visited.add(tuple(head))
-            updated_knots.append(head)
-            knots = updated_knots
-            updated_knots = []
+            new_knots.append(head)
+            knots = new_knots
     print(len(visited))
 
 
