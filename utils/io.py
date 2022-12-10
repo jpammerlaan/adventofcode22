@@ -2,7 +2,7 @@ import os
 
 
 def read_input_file(day, output_type='string'):
-    with open(os.path.join('aoc_2022/{}/{}.in'.format(day, day)), 'r') as f:
+    with open(os.path.join('{}/{}.in'.format(day, day)), 'r') as f:
         input_str = f.read()
     if output_type == 'string':
 
