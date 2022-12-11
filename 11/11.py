@@ -18,31 +18,31 @@ def parse_input(inp):
             'fn': operation_str,
             'div': division_value,
             'true': true_index,
-            'false': false_index
+            'false': false_index,
+            'inspections': 0
         })
     return monkeys
 
 
 def part_one(monkeys, rounds=20, hakuna_matata=True):
-    monkey_range = range(len(monkeys))
-    inspections = [0 for _ in monkey_range]
     upper_bound = math.prod([monkey['div'] for monkey in monkeys])
     for r in range(rounds):
-        for i in monkey_range:
-            monkey = monkeys[i]
+        for i, monkey in enumerate(monkeys):
             for old in monkey['items']:
+                # I absolutely hate eval, but it's a necessary evil here
                 new = eval(monkey['fn'])
                 if hakuna_matata:  # it means don't worry
                     new = math.floor(new / 3)
-                # ensure our numbers don't get too big
+                # Ensure our numbers don't get too big
                 new = new % upper_bound
-                if new % monkey['div'] == 0:
-                    monkeys[monkey['true']]['items'].append(new)
-                else:
-                    monkeys[monkey['false']]['items'].append(new)
-                inspections[i] += 1
+                # Find the monkey to throw to
+                idx = monkey['true'] if new % monkey['div'] == 0 else monkey['false']
+                monkeys[idx]['items'].append(new)
+
+            # Finish the turn by adding up inspections and resetting items
+            monkey['inspections'] += len(monkey['items'])
             monkey['items'] = []
-    print(math.prod(sorted(inspections)[-2:]))
+    print(math.prod(sorted(monkey['inspections'] for monkey in monkeys)[-2:]))
 
 
 parsed_monkeys = parse_input(monkeys_input)
