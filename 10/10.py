@@ -12,6 +12,7 @@ def process_cycle(cycle, X, strength, crt):
 
     return cycle, strength, crt
 
+
 def run(instructions):
     cycle, strength = 0, 0
     X = 1
