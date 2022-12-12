@@ -5,24 +5,20 @@ input_map = read_input_file(day='12', output_type='list')
 
 def parse_input(inp):
     grid = [[ord(x) - ord('a') for x in line] for line in inp]
-    start, end = get_grid_idx(grid, -14).pop(), get_grid_idx(grid, -28).pop()
-    sx, sy = start
-    ex, ey = end
+    sx, sy = get_grid_idx(grid, -14).pop()
+    ex, ey = get_grid_idx(grid, -28).pop()
+
     grid[sy][sx] = 0  # manually set to 0 so shortest path works
     grid[ey][ex] = 26  # manually set to 26 so shortest path works
-    return grid, start, end
+    return grid, (sx, sy), (ex, ey)
 
 
 def get_grid_idx(grid, val):
-    idx = []
-    for y in range(len(grid)):
-        for x in range(len(grid[y])):
-            if grid[y][x] == val:
-                idx.append((x, y))
-    return idx
+    h, w = len(grid), len(grid[0])
+    return [(x, y) for y in range(h) for x in range(w) if grid[y][x] == val]
 
 
-def find_neighbors(grid, node, seen, w, h):
+def find_neighbors(grid, node, seen, h, w):
     x, y = node
     neighbors = [(max(x - 1, 0), y), (min(x + 1, w - 1), y), (x, max(y - 1, 0)), (x, min(y + 1, h - 1))]
     return [(xn, yn) for xn, yn in neighbors if (xn, yn) not in seen and grid[yn][xn] - grid[y][x] <= 1]
@@ -40,7 +36,7 @@ def bfs(grid, start, end):
         if current in seen:
             continue
 
-        neighbors = find_neighbors(grid, current, seen, w, h)
+        neighbors = find_neighbors(grid, current, seen, h, w)
         for n in neighbors:
             dist = shortest_dist[current] + 1
             shortest_dist[n] = min(shortest_dist[n], dist)
