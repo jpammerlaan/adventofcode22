@@ -4,7 +4,13 @@ input_map = read_input_file(day='12', output_type='list')
 
 
 def parse_input(inp):
-    return [[ord(x) - ord('a') for x in line] for line in inp]
+    grid = [[ord(x) - ord('a') for x in line] for line in inp]
+    start, end = get_grid_idx(grid, -14).pop(), get_grid_idx(grid, -28).pop()
+    sx, sy = start
+    ex, ey = end
+    grid[sy][sx] = 0  # manually set to 0 so shortest path works
+    grid[ey][ex] = 26  # manually set to 26 so shortest path works
+    return grid, start, end
 
 
 def get_grid_idx(grid, val):
@@ -46,32 +52,19 @@ def bfs(grid, start, end):
     return 1e5
 
 
-def part_one(grid):
-    start, end = get_grid_idx(grid, -14), get_grid_idx(grid, -28)
-    sx, sy = start[0]
-    ex, ey = end[0]
-    grid[sy][sx] = 0  # manually set to 0 so shortest path works
-    grid[ey][ex] = 26  # manually set to 26 so shortest path works
-
-    print(bfs(grid, start[0], end[0]))
+def part_one(grid, start, end):
+    print(bfs(grid, start, end))
 
 
-def part_two(grid):
-    start, end = get_grid_idx(grid, -14), get_grid_idx(grid, -28)
-    sx, sy = start[0]
-    ex, ey = end[0]
-    grid[sy][sx] = 0  # manually set to 0 so shortest path works
-    grid[ey][ex] = 26  # manually set to 26 so shortest path works
-
+def part_two(grid, end):
     min_steps = 1e7
-    starts = get_grid_idx(grid, 0)
-    for start in starts:
-        curr = bfs(grid, start, end[0])
+    for start in get_grid_idx(grid, 0):
+        curr = bfs(grid, start, end)
         min_steps = min(min_steps, curr)
     print(min_steps)
 
 
-map_grid = parse_input(input_map)
-part_one(map_grid)
-map_grid = parse_input(input_map)
-part_two(map_grid)
+map_grid, S, E = parse_input(input_map)
+part_one(map_grid, S, E)
+map_grid, _, E = parse_input(input_map)
+part_two(map_grid, E)
