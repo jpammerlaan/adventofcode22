@@ -26,14 +26,14 @@ def get_no_beacon_ranges(sensors, y):
 def merge_ranges(ranges):
     ranges = sorted(ranges, key=lambda x: x[0])
     merged_ranges = []
-    current_range = ranges[0]
-    for r in ranges[1:]:
-        if r[0] <= current_range[1] or r[0] == current_range[1] + 1:
-            current_range = (min(current_range[0], r[0]), max(current_range[1], r[1]))
+    curr_start, curr_end = ranges[0]
+    for start, end in ranges[1:]:
+        if start <= curr_end or start == curr_end + 1:
+            curr_end = max(curr_end, end)
         else:
-            merged_ranges.append(current_range)
-            current_range = r
-    merged_ranges.append(current_range)
+            merged_ranges.append((curr_start, curr_end))
+            curr_end = end
+    merged_ranges.append((curr_start, curr_end))
     return merged_ranges
 
 
