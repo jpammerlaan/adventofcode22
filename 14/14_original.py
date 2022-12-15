@@ -3,6 +3,7 @@ from utils.io import read_input_file
 
 rocks = read_input_file(day='14', output_type='list')
 
+
 def create_sand_map(rock_paths):
     sand_map = defaultdict(int)
     for rock_path in rock_paths:
@@ -40,22 +41,24 @@ def print_sand_map(sand_map, to_file=False):
 
 def get_next_pos(x, y):
     for dx, dy in [(0, 1), (-1, 1), (1, 1)]:
-            next_pos = (x+dx, y+dy)
-            if sand_map[next_pos] == 0:
-                return next_pos # next position is available, we're done
+        next_pos = (x + dx, y + dy)
+        if sand_map[next_pos] == 0:
+            return next_pos  # next position is available, we're done
     return x, y
+
 
 def drop_sand(sand_map, max_y):
     x, y = SAND_START
     while True:  # keep dropping
         next_pos = get_next_pos(x, y)
-        if next_pos[1] >= max_y: # stop falling after passing last rock
+        if next_pos[1] >= max_y:  # stop falling after passing last rock
             return sand_map
         if next_pos == (x, y):
             break
         x, y = next_pos
     sand_map[(x, y)] = 2
     return sand_map
+
 
 def count_dropped_sand(sand_map):
     return sum(1 if sand_map[c] == 2 else 0 for c in sand_map.keys())
@@ -79,9 +82,11 @@ def simulate(sand_map, max_y, print_interval=100):
     print_sand_map(sand_map)
     print(count_dropped_sand(sand_map))
 
+
 def part_one(sand_map):
     max_y = max(r[1] for r in sand_map.keys())
     simulate(sand_map, max_y)
+
 
 def part_two(sand_map):
     max_y = max(r[1] for r in sand_map.keys()) + 2
