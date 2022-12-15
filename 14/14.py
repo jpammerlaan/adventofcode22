@@ -46,7 +46,7 @@ def get_next_pos(x, y):
 
 def drop_sand(sand_map, max_y):
     x, y = SAND_START
-    while True:  # keep dropping
+    while True:  # keep dropping until sand is blocked
         next_pos = get_next_pos(x, y)
         if next_pos[1] >= max_y: # stop falling after passing last rock
             return sand_map, False
@@ -62,7 +62,7 @@ def count_dropped_sand(sand_map):
     return sum(1 if sand_map[c] == 2 else 0 for c in sand_map.keys())
 
 
-def simulate(sand_map, max_y, print_interval=100):
+def simulate(sand_map, max_y):
     i = 0
     sand_added = True
     while sand_added:
@@ -78,9 +78,9 @@ def part_one(sand_map):
 
 def part_two(sand_map):
     max_y = max(r[1] for r in sand_map.keys()) + 2
-    for x in range(SAND_START[0] - max_y - 2, SAND_START[0] + max_y + 2):  # make it definitely wide enough
+    for x in range(SAND_START[0] - max_y - 2, SAND_START[0] + max_y + 2):  # create the floor, making it wide enough so sand can never fall off it
         sand_map[(x, max_y)] = 1
-    simulate(sand_map, max_y, print_interval=500)
+    simulate(sand_map, max_y)
 
 
 SAND_START = (500, 0)
