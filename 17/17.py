@@ -1,8 +1,3 @@
-from typing import Tuple, List
-from collections import defaultdict
-
-import numpy as np
-
 from utils.io import read_input_file
 
 rocks_input = read_input_file(day='17', output_type='string').split('\n\n')
@@ -44,8 +39,30 @@ def print_chamber(chamber):
 
 def tetris(rocks, jet, R, J, N):
     chamber, y_max = init_chamber()
-    j = 0
-    for i in range(N):
+    seen = {}
+    i, j = 0, 0
+    cycle_found = False
+
+    while i < N:
+        # keep track of the current state: if this state has been seen before, we can use it to detect cycles
+        if not cycle_found:
+            # Hashing state like this is stolen from another submission, couldn't figure out how to do this effectively.
+            state = (i % R, j % J, '|'.join(f'{x},{y - y_max + 10}' for x, y in chamber if y > y_max - 10))
+            if state in seen:
+                prev_i, prev_y_max = seen[state]
+                cycle_found = True
+                cycle_length = i - prev_i
+                num_cycles_fast_forwarded = (N - i) // cycle_length
+                old_i, old_y_max = i, y_max
+
+                i += cycle_length * num_cycles_fast_forwarded
+                dy = (y_max - prev_y_max) * num_cycles_fast_forwarded
+                y_max += dy
+                chamber = set((x, y + dy) for x, y in chamber)
+                print(f'Fast forwarding from {old_i} to {i}, increasing y_max by {y_max - old_y_max}')
+                print(i, j, chamber, y_max)
+            else:
+                seen[state] = (i, y_max)
         rock = [(x + 2, y + y_max + 4) for x, y in rocks[i % R]]  # start at x = 2, y_max + 3
         while True:
             # move sideways
@@ -65,14 +82,17 @@ def tetris(rocks, jet, R, J, N):
                     chamber.add(r)
                 y_max = max(y_max, max(y for x, y in rock))
                 break
+        i += 1
     print(y_max)
 
 
 def part_one(rocks, jet, R, J):
+    print('Part one: ')
     tetris(rocks, jet, R, J, 2022)
 
 
 def part_two(rocks, jet, R, J):
+    print('Part two: ')
     tetris(rocks, jet, R, J, 1_000_000_000_000)
 
 
