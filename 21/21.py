@@ -44,9 +44,9 @@ def part_one(monkeys):
 
 
 def part_two(monkeys):
-    # From attempting some random numbers, it seems like 'root' is giant, but goes down almost linearly
-    # Then around zero it suddenly shoots to a large negative number.
-    # So we can iteratively try to find the root (har har) of the function by finding the first negative input, then
+    # From attempting some random numbers, it seems like 'root' (in my case: cmmh - lqcd) is giant, but goes down
+    # almost linearly, then around the actual root (har har) it suddenly shoots to a large negative number.
+    # So we can iteratively try to find the root of the function by finding the first negative input, then
     # reducing the step iteratively to narrow the search space.
     parsed_monkeys, known_at_start = parse_monkeys(monkeys)
     inc = 100_000_000_000_000  # some giant number
