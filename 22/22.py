@@ -24,7 +24,7 @@ def parse_board(board):
             if x >= len(board[y]):
                 break
             if (c := board_map[board[y][x]]) > 0:
-                parsed_board[(x + y * 1j)] = c
+                parsed_board[(x - y * 1j)] = c
 
     # parse path
     path_lengths = map(int, re.split('[RL]', path))
@@ -41,13 +41,13 @@ def get_start(board, j=0 * 1j):
 
 def wrap(pos, d, board):
     if d.real > 0:
-        return min(key.real for key in board.keys() if key.imag == pos.imag) + pos.imag
+        return min(key.real for key in board.keys() if key.imag == pos.imag) + pos.imag * 1j
     elif d.real < 0:
-        return max(key.real for key in board.keys() if key.imag == pos.imag) + pos.imag
+        return max(key.real for key in board.keys() if key.imag == pos.imag) + pos.imag * 1j
     elif d.imag > 0:
-        return pos.real + min(key.imag for key in board.keys() if key.real == pos.real)
+        return pos.real + min(key.imag for key in board.keys() if key.real == pos.real) * 1j
     elif d.imag < 0:
-        return pos.real + max(key.imag for key in board.keys() if key.real == pos.real)
+        return pos.real + max(key.imag for key in board.keys() if key.real == pos.real) * 1j
     else:
         return ValueError(f'Incorrect direction {d} specified!')
 
@@ -61,6 +61,10 @@ def get_next_pos(pos, d, board):
         print(f'Running into wall at {next_pos}. Returning {pos}.')
         return pos
     return next_pos
+
+
+def get_facing(d):
+    return 2 * (np.angle(np.conj(d)) / np.pi) % 4
 
 
 def part_one(board):
@@ -77,8 +81,13 @@ def part_one(board):
                 break
             pos = next_pos
             print(f'Moving to {pos}.')
+            steps += 1
+        d = d * -1j if turn == 'R' else d * 1j
 
-        d = d * 1j if turn == 'R' else d * -1j
+    facing = get_facing(d)
+    print(-1000 * (pos.imag - 1))
+    print(4 * (pos.real + 1))
+    print(facing)
 
 
 part_one(board_input)
