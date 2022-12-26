@@ -31,18 +31,17 @@ def get_options():
 def propose(elves, pos, options):
     x, y = pos
     # check if there are any adjacent elves; if not, don't move
-    adjacent = [(x + dx, y + dy) for dx in [-1, 0, 1] for dy in [-1, 0, 1]]
-    adjacent.remove(pos)
-    if all(adj not in elves for adj in adjacent):
-        return pos, False
+    adjacent = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
+    if all((x + dx, y + dy) not in elves for dx, dy in adjacent):
+        return pos
     # propose each direction
     for proposal in options:
         # if no elves are in or next to proposal squares, move there
         if all((x + dx, y + dy) not in elves for dx, dy in proposal):
             dx, dy = proposal[0]
-            return (x + dx, y + dy), True
+            return (x + dx, y + dy)
     # if no proposal was possible, return the old position
-    return pos, True
+    return pos
 
 
 def print_map(elves):
@@ -59,37 +58,40 @@ def print_map(elves):
         print('')
 
 
+def round(elves, options):
+    # first half, propose new positions:
+    proposals = {}
+    for pos, elf in elves.items():
+        proposal = propose(elves, pos, options)
+        proposals[elf] = (pos, proposal)
+
+    # second half, move if no other elf tries to move here:
+    new_elves = {}
+    counter = Counter([proposal for _, proposal in proposals.values()])
+    for elf, (pos, proposal) in proposals.items():
+        # only move elf if they are the only elf proposing to move here
+        if counter[proposal] == 1:
+            new_elves[proposal] = elf
+        else:
+            new_elves[pos] = elf
+    
+    return new_elves
+
+
 def run(elves, n_rounds):
     options = get_options()
-    print_map(elves)
     for i in range(int(n_rounds)):  # run a round
-        # first half, propose new positions:
-        moves_needed = False
-        proposals = {}
-        for pos, elf in elves.items():
-            proposal, needs_to_move = propose(elves, pos, options)
-            moves_needed = max(needs_to_move, moves_needed)
-            proposals[elf] = (pos, proposal)
+        new_elves = round(elves, options)
 
-        if not moves_needed:
+        # check if we're done
+        if new_elves == elves:
             print(f'Nobody needs to move in round {i}, done.')
             return elves, i + 1
 
-        # second half, move if no other elf tries to move here:
-        new_elves = {}
-        counter = Counter([proposal for _, proposal in proposals.values()])
-        for elf, (pos, proposal) in proposals.items():
-            # only move elf if they are the only elf proposing to move here
-            if counter[proposal] == 1:
-                new_elves[proposal] = elf
-            else:
-                new_elves[pos] = elf
-
-        # Move all the elves
+        # move all the elves
         elves = new_elves
-        if i % 100 == 0:
-            print(i)
-        # Rotate the proposal options so we check other directions first
+
+        # rotate the proposal options so we check other directions first
         options.rotate(-1)
     return elves, i
 

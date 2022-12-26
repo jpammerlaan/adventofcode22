@@ -82,7 +82,7 @@ def run(elves, n_rounds):
 
         # second half, move if no duplicates:
         new_elves = {}
-        counter = Counter([proposal for _, proposal, _ in proposals.values()])
+        counter = Counter([proposal for _, proposal in proposals.values()])
         for elf, (pos, proposal) in proposals.items():
             # only move elf if they are the only elf proposing to move here
             if counter[proposal] == 1:
