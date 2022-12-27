@@ -100,5 +100,3 @@ def part_two(walls, blizzards):
 parsed_walls, parsed_blizzards = parse_map(map_input)
 print(f'Part one: {part_one(parsed_walls, parsed_blizzards)}')
 print(f'Part two: {part_two(parsed_walls, parsed_blizzards)}')
-
-
