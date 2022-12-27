@@ -48,13 +48,14 @@ def get_blizzard_cycles(walls, blizzards):
 def get_next_positions(walls, bounds, blizzard_cycles, i, pos):
     possible = []
     x, y = pos
+    x_bounds, y_bounds = bounds
     current_blizzards = [blizzard[(i + 1) % len(blizzard)] for blizzard in blizzard_cycles]
     for dx, dy in [(0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)]:
         next_pos = (x + dx, y + dy)
         if (next_pos not in current_blizzards
             and next_pos not in walls.keys()
-            and bounds[0][0] <= next_pos[0] < bounds[0][1] 
-            and bounds[1][0] <= next_pos[1] < bounds[1][1]
+            and x_bounds[0] <= next_pos[0] < x_bounds[1] 
+            and y_bounds[0] <= next_pos[1] < y_bounds[1]
         ):
             possible.append((i + 1, next_pos))
     return possible
@@ -96,8 +97,8 @@ def part_two(walls, blizzards):
     num_rounds = bfs(walls, blizzards, start=start, end=end, start_tick=num_rounds)
     return num_rounds
 
-# parsed_walls, parsed_blizzards = parse_map(map_input)
-# print(f'Part one: {part_one(parsed_walls, parsed_blizzards)}')
-# print(f'Part two: {part_two(parsed_walls, parsed_blizzards)}')
+parsed_walls, parsed_blizzards = parse_map(map_input)
+print(f'Part one: {part_one(parsed_walls, parsed_blizzards)}')
+print(f'Part two: {part_two(parsed_walls, parsed_blizzards)}')
 
 
